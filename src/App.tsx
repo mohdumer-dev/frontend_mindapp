@@ -1,29 +1,17 @@
-import Dashboard from "./page/dashboard";
-import { createContext, ReactNode, useContext, useState } from "react";
-
-type StateContextType = {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-export const stateContent = createContext<StateContextType | undefined>(
-  undefined
-);
-
-function StateContext({ children }: { children: ReactNode }) {
-  const [open, setOpen] = useState<boolean>(false);
-  return (
-    <stateContent.Provider value={{ open, setOpen }}>
-      {children}
-    </stateContent.Provider>
-  );
-}
+import Home from "./page/Home";
+import { Route, BrowserRouter, Routes } from "react-router-dom";
+import Signup from "./page/Signup";
+import Signin from "./page/Signin";
 
 const App = () => {
   return (
-    <StateContext>
-      <Dashboard />
-    </StateContext>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/dashboard" element={<Home />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/signin" element={<Signin />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 export default App;

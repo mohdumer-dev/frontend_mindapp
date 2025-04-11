@@ -1,4 +1,4 @@
-import { stateContent } from "../App";
+import { stateContent } from "../page/Home";
 import { useContext } from "react";
 
 export function useStateContext() {
