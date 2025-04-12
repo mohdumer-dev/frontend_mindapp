@@ -7,34 +7,45 @@ import Twitter from "./icons/Twitter";
 import { ReactElement, useState } from "react";
 import CreateContentModal from "./CreateContentModal";
 import { useStateContext } from "../hooks/useContextState";
+import useDelete from "../hooks/Delete";
+import useContent from "../hooks/Content";
+import Tag from "./icons/Tag";
 
-interface ContentProp {
-  text: string;
+export interface ContentProp {
+  title: string;
   link: string;
   type: "twitter" | "youtube";
+  _id: string;
+  tags: { title: string[] };
 }
 const Logo: Record<string, ReactElement> = {
   twitter: <Twitter />,
   youtube: <Youtube />,
 };
 const Content = (props: ContentProp) => {
-   const{open,setOpen}=useStateContext()
+  const { refetch } = useContent();
+  function UserDelete() {
+    useDelete(props._id);
+    refetch();
+  }
   return (
-    <div className="w-72 relative min-w-72 flex flex-col rounded-xl shadow-md outline-slate-500 border-slate-300 overflow-hidden">
+    <div className="w-72 relative min-w-72 py-4 items-center flex flex-col rounded-xl shadow-md outline-slate-500 border-slate-300 overflow-hidden">
       {/* Header */}
-      <CreateContentModal  open={open} CloseUp={setOpen}/>
+
       <div className="flex h-14 w-full items-center justify-between rounded-t-xl ">
         <div className="flex gap-2 w-full items-center ml-4">
           {Logo[props.type]}
           <div className="text-black flex leading-3.5 items-center text-base/tight  w-full  ">
-            {props.text}
+            {props.title}
           </div>
         </div>
         <div className="flex gap-3 mr-4 items-center">
           <a href={props.link} target="_blank">
             <SmallShare />
           </a>
-          <Del />
+          <span onClick={UserDelete} className="cursor-pointer">
+            <Del />
+          </span>
         </div>
       </div>
 
@@ -55,8 +66,8 @@ const Content = (props: ContentProp) => {
         {props.type === "twitter" ? (
           <div className="flex justify-center">
             <TwitterTweetEmbed
-              placeholder="loading"
-              tweetId={props.link.split("/").pop() || ""}
+              placeholder="Loading ..."
+              tweetId={ props.link.split("/").pop() || ""}
               options={{
                 hideCard: false,
                 hideThread: true,
@@ -65,6 +76,12 @@ const Content = (props: ContentProp) => {
             />
           </div>
         ) : null}
+      </div>
+      {/* Tags */}
+      <div className="w-9/10  flex flex-wrap items-center  py-2">
+        {props.tags.title.map((x: string, index: number) => (
+          <Tag key={index} text={`${x}`} />
+        ))}
       </div>
     </div>
   );

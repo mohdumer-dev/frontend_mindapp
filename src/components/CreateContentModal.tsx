@@ -4,6 +4,7 @@ import { useStateContext } from "../hooks/useContextState";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import Tag from "../components/icons/Tag";
+import useContent from "../hooks/Content";
 
 const CreateContentModal = ({
   open,
@@ -16,20 +17,35 @@ const CreateContentModal = ({
   const { setOpen } = useStateContext();
   const [title, setTitle] = useState<string>("");
   const [link, setLink] = useState<string>("");
-  const [gender, setGender] = useState<string>("");
+  const [Type, setType] = useState<string>("");
   const [input, setInput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
+  const { refetch } = useContent();
 
   const data = useMutation({
     mutationFn: async () => {
-      const reponse = await axios.post(`${URL}/create`, {
-        title: title,
-        link: link,
-      });
+      const reponse = await axios.post(
+        `${URL}/create`,
+        {
+          title: title,
+          link: link,
+          type: Type,
+          tags: tags,
+        },
+        {
+          withCredentials: true,
+        }
+      );
       return reponse;
     },
-    onSuccess: (data) => {
-      console.log(data);
+    onSuccess: () => {
+      console.log(link)
+      setTitle("");
+      setLink("");
+      setType("");
+      setTags([]);
+      setOpen(false);
+      refetch()
     },
     onError: (err) => {
       console.log(err.message);
@@ -47,14 +63,11 @@ const CreateContentModal = ({
 
   function Submit() {
     data.mutate();
-    setTitle("");
-    setLink("");
-    setOpen(false);
   }
   return (
     <div>
       {open && (
-        <div className="w-screen h-screen fixed top-0 right-0 bg-black/70 flex justify-center items-center">
+        <div className="w-screen z-10 h-screen fixed top-0 right-0 bg-black/70 flex justify-center items-center">
           <div className="flex flex-col   w-80 rounded-2xl overflow-hidden h-96 bg-white ">
             <div className="w-full  flex h-12 items-center justify-end mt-2  ">
               <div className="cursor-pointer" onClick={() => CloseUp(!open)}>
@@ -91,9 +104,9 @@ const CreateContentModal = ({
                   </label>
                   <select
                     id="type"
-                    value={gender}
+                    value={Type}
                     onChange={(e) => {
-                      setGender(e.target.value);
+                      setType(e.target.value);
                     }}
                     className="border  rounded p-1 w-full"
                   >
