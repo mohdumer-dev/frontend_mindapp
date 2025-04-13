@@ -4,8 +4,7 @@ import SmallShare from "./icons/SmallShare";
 import Youtube from "./icons/Youtube";
 import { TwitterTweetEmbed } from "react-twitter-embed";
 import Twitter from "./icons/Twitter";
-import { ReactElement, useState } from "react";
-import CreateContentModal from "./CreateContentModal";
+import { ReactElement } from "react";
 import { useStateContext } from "../hooks/useContextState";
 import useDelete from "../hooks/Delete";
 import useContent from "../hooks/Content";
@@ -18,29 +17,34 @@ export interface ContentProp {
   _id: string;
   tags: { title: string[] };
 }
+
 const Logo: Record<string, ReactElement> = {
   twitter: <Twitter />,
   youtube: <Youtube />,
 };
+
 const Content = (props: ContentProp) => {
   const { refetch } = useContent();
+  console.log(props.link.split('/').pop());
+
   function UserDelete() {
     useDelete(props._id);
     refetch();
   }
-  return (
-    <div className="w-72 relative min-w-72 py-4 items-center flex flex-col rounded-xl shadow-md outline-slate-500 border-slate-300 overflow-hidden">
-      {/* Header */}
 
-      <div className="flex h-14 w-full items-center justify-between rounded-t-xl ">
-        <div className="flex gap-2 w-full items-center ml-4">
+  return (
+    <div className="w-72 relative min-w-72 flex flex-col rounded-xl shadow-md border border-slate-300 overflow-hidden">
+      
+      {/* Fixed Header */}
+      <div className="flex h-14 w-full items-center justify-between px-4 bg-white">
+        <div className="flex gap-2 items-center w-full">
           {Logo[props.type]}
-          <div className="text-black flex leading-3.5 items-center text-base/tight  w-full  ">
+          <div className="text-black text-base font-medium truncate w-full">
             {props.title}
           </div>
         </div>
-        <div className="flex gap-3 mr-4 items-center">
-          <a href={props.link} target="_blank">
+        <div className="flex gap-3 items-center">
+          <a href={props.link} target="_blank" rel="noopener noreferrer">
             <SmallShare />
           </a>
           <span onClick={UserDelete} className="cursor-pointer">
@@ -49,8 +53,8 @@ const Content = (props: ContentProp) => {
         </div>
       </div>
 
-      {/* Embedded Content */}
-      <div className="w-full p-2  ">
+      {/* Embedded Content (Flexible Height) */}
+      <div className="w-full max-h-64 overflow-y-auto p-2 bg-gray-50">
         {props.type === "youtube" ? (
           <iframe
             className="w-full h-48 rounded-lg"
@@ -63,22 +67,24 @@ const Content = (props: ContentProp) => {
             loading="lazy"
           />
         ) : null}
+
         {props.type === "twitter" ? (
           <div className="flex justify-center">
             <TwitterTweetEmbed
-              placeholder="Loading ..."
-              tweetId={ props.link.split("/").pop() || ""}
+              placeholder={"Loading ..."}
+              tweetId={props.link.split("/").pop() || ""}
               options={{
                 hideCard: false,
                 hideThread: true,
-                width: 300, // or remove for responsive width
+                width: 300,
               }}
             />
           </div>
         ) : null}
       </div>
+
       {/* Tags */}
-      <div className="w-9/10  flex flex-wrap items-center  py-2">
+      <div className="flex flex-wrap items-center gap-1 px-2 py-2 bg-white">
         {props.tags.title.map((x: string, index: number) => (
           <Tag key={index} text={`${x}`} />
         ))}

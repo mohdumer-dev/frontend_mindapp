@@ -22,6 +22,7 @@ const CreateContentModal = ({
   const [tags, setTags] = useState<string[]>([]);
   const { refetch } = useContent();
 
+
   const data = useMutation({
     mutationFn: async () => {
       const reponse = await axios.post(
@@ -36,10 +37,10 @@ const CreateContentModal = ({
           withCredentials: true,
         }
       );
-      return reponse;
+      return reponse.data.msg;
     },
     onSuccess: () => {
-      console.log(link)
+
       setTitle("");
       setLink("");
       setType("");

@@ -9,7 +9,8 @@ const useContent = () => {
             )
             return response.data.content
         },
-        refetchOnWindowFocus:true
+        refetchOnWindowFocus:true,
+        refetchInterval:1000*60
     }
     )
 }

@@ -32,7 +32,7 @@ export const Button = (props: ButtonProp) => {
       onClick={props.onClick}
       className={`${size[props.size]} ${
         Styles[props.varaint]
-      }  cursor-pointer py-2 px-2 rounded-sm font-semibold  flex  gap-2`}
+      }  cursor-pointer p-1  sm:p-2 md:py-2 md:px-2 rounded-sm font-semibold  flex  gap-2 `}
     >
       {props.startIcon?<div>{props.startIcon}</div>:null} {props.text}
       {props.endIcon?<div>{props.endIcon}</div>:null}
